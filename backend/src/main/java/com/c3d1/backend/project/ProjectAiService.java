@@ -40,7 +40,7 @@ public class ProjectAiService {
     @Value("${c3d1.ai.max-tokens:400}")
     private int maxTokens;
 
-    public ProjectInsightResponse analyzeProject(String projectName, int memberCount, int totalTasks, int openTasks,
+    public ProjectInsightResponse analyzeProject(String projectName, long memberCount, long totalTasks, int openTasks,
                                                 double completionRate, int overdue, int dueSoon, int pendingReview,
                                                 int messages) {
         if (!hasConfig()) {
@@ -61,7 +61,7 @@ public class ProjectAiService {
         }
     }
 
-    public ProjectAiChatResponse answerProjectQuestion(String projectName, int memberCount, int totalTasks, int openTasks,
+    public ProjectAiChatResponse answerProjectQuestion(String projectName, long memberCount, long totalTasks, int openTasks,
                                                        double completionRate, int overdue, int dueSoon, int pendingReview,
                                                        int messages, String question) {
         if (!hasConfig()) {
@@ -84,7 +84,7 @@ public class ProjectAiService {
         }
     }
 
-    protected ProjectAiChatResponse buildFallbackChatResponse(String projectName, int memberCount, int totalTasks, int openTasks,
+    protected ProjectAiChatResponse buildFallbackChatResponse(String projectName, long memberCount, long totalTasks, int openTasks,
                                                               double completionRate, int overdue, int dueSoon,
                                                               int pendingReview, int messages, String question) {
         StringBuilder answer = new StringBuilder();
@@ -112,7 +112,7 @@ public class ProjectAiService {
                 .build();
     }
 
-    protected ProjectInsightResponse buildFallbackInsight(String projectName, int memberCount, int totalTasks, int openTasks,
+    protected ProjectInsightResponse buildFallbackInsight(String projectName, long memberCount, long totalTasks, int openTasks,
                                                          double completionRate, int overdue, int dueSoon,
                                                          int pendingReview, int messages) {
         String health = completionRate >= 80 ? "ON_TRACK" : completionRate >= 55 ? "WATCH" : "NEEDS_FOCUS";
@@ -175,7 +175,7 @@ public class ProjectAiService {
         return "openai".equalsIgnoreCase(provider) && endpoint != null && !endpoint.isBlank() && apiKey != null && !apiKey.isBlank();
     }
 
-    private String buildChatPrompt(String projectName, int memberCount, int totalTasks, int openTasks, double completionRate,
+    private String buildChatPrompt(String projectName, long memberCount, long totalTasks, int openTasks, double completionRate,
                                    int overdue, int dueSoon, int pendingReview, int messages, String question) {
         return String.format(Locale.ROOT,
                 "Bạn là trợ lý AI cho dự án. Hãy trả lời câu hỏi bằng tiếng Việt, ngắn gọn và thực tế. " +
@@ -184,7 +184,7 @@ public class ProjectAiService {
                 projectName, memberCount, totalTasks, openTasks, completionRate, overdue, dueSoon, pendingReview, messages, question);
     }
 
-    private String buildPrompt(String projectName, int memberCount, int totalTasks, int openTasks, double completionRate,
+    private String buildPrompt(String projectName, long memberCount, long totalTasks, int openTasks, double completionRate,
                                int overdue, int dueSoon, int pendingReview, int messages) {
         return String.format(Locale.ROOT,
                 "Bạn là chuyên gia phân tích vận hành dự án. Phân tích dự án này và đưa ra lời khuyên ngắn gọn, thực tế bằng tiếng Việt. " +
@@ -216,7 +216,7 @@ public class ProjectAiService {
         return message.path("content").asText();
     }
 
-    private ProjectInsightResponse parseModelResponse(String responseText, String projectName, int memberCount, int totalTasks,
+    private ProjectInsightResponse parseModelResponse(String responseText, String projectName, long memberCount, long totalTasks,
                                                      int openTasks, double completionRate, int overdue, int dueSoon,
                                                      int pendingReview, int messages) throws Exception {
         String cleaned = responseText == null ? "" : responseText.trim();

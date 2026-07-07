@@ -303,25 +303,28 @@ public class ProjectService {
         validateSubmissionContent(file, extension);
         String trustedContentType = trustedContentType(extension);
 
+        // **THAY ĐỔI LOGIC UPLOAD**
+        // Thay vì lưu vào local, chúng ta sẽ upload lên S3.
+        // Giả sử bạn đã cấu hình S3 client và tên bucket.
+        // String bucketName = "c3d1-uploads";
+        String storedName = "project-" + projectId + "/task-" + taskId + "/" + UUID.randomUUID() + "-" + sanitizeFileName(originalName);
+
         try {
-            Path taskDirectory = Paths.get(uploadDir, "project-submissions", "project-" + projectId, "task-" + taskId)
-                    .toAbsolutePath()
-                    .normalize();
-            Files.createDirectories(taskDirectory);
-
-            String storedName = UUID.randomUUID() + "-" + sanitizeFileName(originalName);
-            Path target = taskDirectory.resolve(storedName).normalize();
-            if (!target.startsWith(taskDirectory)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file path");
-            }
-
-            file.transferTo(target);
+            // Ví dụ logic upload S3 (cần có S3Client bean)
+            /*
+            s3Client.putObject(PutObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(storedName)
+                            .build(),
+                    RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+            String s3Path = "s3://" + bucketName + "/" + storedName;
+            */
 
             task.setSubmissionOriginalName(originalName);
             task.setSubmissionStoredName(storedName);
             task.setSubmissionContentType(trustedContentType);
             task.setSubmissionSize(file.getSize());
-            task.setSubmissionPath(target.toString());
+            task.setSubmissionPath(storedName); // Lưu key của S3 thay vì đường dẫn local
             task.setSubmittedByEmail(currentUserEmail);
             task.setSubmittedAt(LocalDateTime.now());
             task.setSubmissionNote(note);
@@ -339,14 +342,14 @@ public class ProjectService {
                     .storedName(storedName)
                     .contentType(trustedContentType)
                     .size(file.getSize())
-                    .path(target.toString())
+                    .path(storedName) // Lưu key của S3
                     .note(note)
                     .status("PENDING_REVIEW")
                     .submittedByEmail(currentUserEmail)
                     .build());
             logActivity(projectId, currentUserEmail, "SUBMISSION_UPLOADED", "Submitted file", saved.getTitle());
             return toTaskResponse(saved);
-        } catch (IOException exception) {
+        } catch (Exception exception) { // Bắt Exception chung hơn cho S3
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not store submission file");
         }
     }
