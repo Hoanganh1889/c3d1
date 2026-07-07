@@ -422,11 +422,12 @@ function ProjectRoom() {
                         <MemberList members={state.members} />
                     </WorkspacePanel>
                 ) : (
-                    <WorkspacePanel title={t("project.room.memberGuide")} subtitle={t("nav.tasks")}>
+                    <WorkspacePanel title={t("project.room.memberGuide")} subtitle={t("project.room.memberSettings")}> 
                         <ul className="ui-text-muted list-inside list-disc space-y-1 text-xs">
                             <li>{t("project.room.guideSubmit")}</li>
                             <li>{t("project.room.guideChat")}</li>
                             <li>{t("project.room.guideStatus")}</li>
+                            <li>{t("project.room.guideSettings")}</li>
                         </ul>
                     </WorkspacePanel>
                 )}

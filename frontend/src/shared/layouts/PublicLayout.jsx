@@ -30,7 +30,7 @@ function PublicLayout() {
                             C
                         </span>
                         <div className="min-w-0">
-                            <p className="text-lg font-black leading-none">C3D1</p>
+                            <p className="text-lg font-black leading-none">WeDo</p>
                             <p className="hidden truncate text-[11px] font-black tracking-[0.2em] text-slate-500 sm:block">
                                 {t("public.brand.tagline")}
                             </p>
@@ -105,7 +105,7 @@ function PublicLayout() {
             <footer className="relative z-10 mt-auto border-t border-white/10 bg-[#020617]/80">
                 <div className="mx-auto grid max-w-7xl gap-4 px-4 py-6 text-sm text-slate-400 sm:px-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-center lg:px-10">
                     <div>
-                        <p className="font-bold text-slate-200">C3D1</p>
+                        <p className="font-bold text-slate-200">WeDo</p>
                         <p className="mt-1">{t("public.footer.tagline")}</p>
                     </div>
                     <div className="flex flex-wrap gap-2">

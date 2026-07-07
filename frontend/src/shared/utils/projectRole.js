@@ -33,6 +33,7 @@ export const PROJECT_NAV_OWNER = [
     { to: "chat", labelKey: "nav.chat" },
     { to: "files", labelKey: "nav.files" },
     { to: "performance", labelKey: "nav.performance" },
+    { to: "ai", labelKey: "nav.ai" },
     { to: "invite", labelKey: "nav.invite" },
     { to: "settings", labelKey: "nav.settings" },
 ];
@@ -43,6 +44,8 @@ export const PROJECT_NAV_MEMBER = [
     { to: "chat", labelKey: "nav.chat" },
     { to: "files", labelKey: "nav.filesMember" },
     { to: "performance", labelKey: "nav.performance" },
+    { to: "ai", labelKey: "nav.ai" },
+    { to: "settings", labelKey: "nav.settings" },
 ];
 
 export function getProjectNavItems(canManage) {

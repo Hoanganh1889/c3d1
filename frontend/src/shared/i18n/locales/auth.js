@@ -4,7 +4,7 @@ export const authLocales = {
         quotes: [
             {
                 text: "Một phòng dự án, một nhịp làm việc — task, file và chat không còn rời rạc.",
-                author: "C3D1 Workspace",
+                author: "WeDo Workspace",
             },
             {
                 text: "Owner giao việc rõ ràng; Member nộp bài đúng hạn — mọi người biết mình đang ở đâu.",
@@ -19,8 +19,8 @@ export const authLocales = {
                 author: "Tham gia phòng",
             },
         ],
-        shell: { backHome: "Về trang chủ", brand: "C3D1" },
-        hero: { ariaLabel: "Minh họa workspace C3D1" },
+        shell: { backHome: "Về trang chủ", brand: "WeDo" },
+        hero: { ariaLabel: "Minh họa workspace WeDo" },
         google: {
             divider: "hoặc",
             continue: "Tiếp tục bằng Google",
@@ -29,13 +29,13 @@ export const authLocales = {
             notConfigured: "Đăng nhập Google chưa được cấu hình Web Client ID.",
         },
         login: {
-            eyebrow: "C3D1 Workspace",
+            eyebrow: "WeDo Workspace",
             title: "Chào mừng bạn trở lại",
             subtitle:
                 "Đăng nhập để mở phòng dự án, tiếp tục task đang dở và trò chuyện cùng team.",
             heroTitle: "Project, task và chat trong một phòng",
             heroText:
-                "C3D1 gom công việc, file nộp và trao đổi vào cùng một workspace — bạn biết ai đang làm gì, deadline nào sắp tới.",
+                "WeDo gom công việc, file nộp và trao đổi vào cùng một workspace — bạn biết ai đang làm gì, deadline nào sắp tới.",
             h1: "Phòng dự án",
             h1v: "1 mã — cả team",
             h2: "Task & file",
@@ -59,7 +59,7 @@ export const authLocales = {
             title: "Tạo tài khoản mới",
             subtitle: "Một lần đăng ký — tạo phòng Owner hoặc tham gia bằng mã mời.",
             heroTitle: "Khởi đầu phòng làm việc của bạn",
-            heroText: "C3D1 giúp mọi người cùng nhìn tiến độ và deadline.",
+            heroText: "WeDo giúp mọi người cùng nhìn tiến độ và deadline.",
             h1: "Owner",
             h1v: "Tạo phòng & giao việc",
             h2: "Member",
@@ -135,7 +135,7 @@ export const authLocales = {
         quotes: [
             {
                 text: "One project room, one rhythm — tasks, files, and chat in one place.",
-                author: "C3D1 Workspace",
+                author: "WeDo Workspace",
             },
             {
                 text: "Owners assign clearly; members submit on time — everyone knows where they stand.",
@@ -150,8 +150,8 @@ export const authLocales = {
                 author: "Quick onboarding",
             },
         ],
-        shell: { backHome: "Back to home", brand: "C3D1" },
-        hero: { ariaLabel: "C3D1 workspace illustration" },
+        shell: { backHome: "Back to home", brand: "WeDo" },
+        hero: { ariaLabel: "WeDo workspace illustration" },
         google: {
             divider: "or",
             continue: "Continue with Google",
@@ -160,12 +160,12 @@ export const authLocales = {
             notConfigured: "Google Sign-In needs a Web Client ID.",
         },
         login: {
-            eyebrow: "C3D1 Workspace",
+            eyebrow: "WeDo Workspace",
             title: "Welcome back",
             subtitle: "Sign in to open your project rooms and continue where you left off.",
             heroTitle: "Projects, tasks, and chat in one room",
             heroText:
-                "C3D1 brings work, submissions, and discussion together — see who is doing what and which deadlines are next.",
+                "WeDo brings work, submissions, and discussion together — see who is doing what and which deadlines are next.",
             h1: "Project room",
             h1v: "One code — whole team",
             h2: "Tasks & files",

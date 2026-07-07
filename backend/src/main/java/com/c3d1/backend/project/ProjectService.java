@@ -63,6 +63,7 @@ public class ProjectService {
     private final SubmissionCommentRepository submissionCommentRepository;
     private final TaskTemplateRepository taskTemplateRepository;
     private final ProjectNotificationService notificationService;
+    private final ProjectAiService projectAiService;
     private final UserRepository userRepository;
     private final SystemSettingsService systemSettingsService;
 
@@ -753,61 +754,82 @@ public class ProjectService {
         ProjectSummaryResponse summary = getSummary(projectId);
         List<Task> tasks = taskRepository.findByProjectIdOrderByCreatedAtAsc(projectId);
         List<ChatMessage> messages = chatMessageRepository.findByProjectIdOrderByCreatedAtAsc(projectId);
-        String health = determineHealth(summary.getCompletionRate(), summary.getInProgressCount(), summary.getReviewCount());
-        String focus = determineFocus(summary.getTodoCount(), summary.getInProgressCount(), summary.getReviewCount(), summary.getDoneCount());
-        String nextAction = determineNextAction(
-                summary.getTodoCount(),
-                summary.getInProgressCount(),
-                summary.getReviewCount(),
-                summary.getDoneCount(),
-                summary.getMemberCount(),
-                summary.getMessageCount()
-        );
-        String context = String.format(
-                Locale.ROOT,
-                "Team có %d thành viên, %d task đang mở và %d tin nhắn gần nhất.",
-                summary.getMemberCount(),
-                summary.getTodoCount() + summary.getInProgressCount() + summary.getReviewCount(),
-                summary.getMessageCount()
-        );
+        int openTasks = (int) (summary.getTodoCount() + summary.getInProgressCount() + summary.getReviewCount());
+        double completionRate = summary.getCompletionRate();
+        long overdue = tasks.stream()
+                .filter(task -> task.getDueDate() != null)
+                .filter(task -> task.getStatus() != null && !"DONE".equals(task.getStatus()))
+                .filter(task -> task.getDueDate().isBefore(LocalDate.now()))
+                .count();
+        long dueSoon = tasks.stream()
+                .filter(task -> task.getDueDate() != null)
+                .filter(task -> task.getStatus() != null && !"DONE".equals(task.getStatus()))
+                .filter(task -> !task.getDueDate().isBefore(LocalDate.now()))
+                .filter(task -> !task.getDueDate().isAfter(LocalDate.now().plusDays(3)))
+                .count();
+        long pendingReview = tasks.stream()
+                .filter(task -> "REVIEW".equals(task.getStatus()) || "PENDING_REVIEW".equals(task.getSubmissionStatus()))
+                .count();
 
-        String insight = String.format(
-                Locale.ROOT,
-                "Project %s has %d members, %d tasks, and %d messages. Completion is %.1f%%.",
+        ProjectInsightResponse aiResponse = projectAiService.analyzeProject(
                 summary.getProjectName(),
                 summary.getMemberCount(),
                 summary.getTaskCount(),
-                summary.getMessageCount(),
-                summary.getCompletionRate()
+                openTasks,
+                completionRate,
+                (int) overdue,
+                (int) dueSoon,
+                (int) pendingReview,
+                messages.size()
         );
 
         return ProjectInsightResponse.builder()
                 .projectId(projectId)
-                .summary(insight)
-                .health(health)
-                .focus(focus)
-                .nextAction(nextAction)
-                .context(context)
-                .highlights(List.of(
-                        "Done tasks: " + summary.getDoneCount(),
-                        "Active tasks: " + (summary.getTodoCount() + summary.getInProgressCount() + summary.getReviewCount()),
-                        "Latest activity: " + latestActivity(messages, tasks)
-                ))
-                .recommendations(List.of(
-                        summary.getTaskCount() == 0
-                                ? "Create the first task to start the workflow."
-                                : "Move one task into review to tighten delivery.",
-                        summary.getMemberCount() < 2
-                                ? "Invite another teammate to spread the load."
-                                : "Keep communication open in the chat room."
-                ))
-                .signals(List.of(
-                        "Health: " + describeHealth(health),
-                        "Focus: " + describeFocus(focus),
-                        "Open tasks: " + (summary.getTodoCount() + summary.getInProgressCount() + summary.getReviewCount()),
-                        "Recent activity: " + latestActivity(messages, tasks)
-                ))
+                .summary(aiResponse.getSummary())
+                .health(aiResponse.getHealth())
+                .focus(aiResponse.getFocus())
+                .nextAction(aiResponse.getNextAction())
+                .context(aiResponse.getContext())
+                .highlights(aiResponse.getHighlights())
+                .recommendations(aiResponse.getRecommendations())
+                .signals(aiResponse.getSignals())
                 .build();
+    }
+
+    public ProjectAiChatResponse askAiQuestion(Long projectId, String currentUserEmail, String question) {
+        requireProjectMember(projectId, currentUserEmail);
+        ProjectSummaryResponse summary = getSummary(projectId);
+        List<Task> tasks = taskRepository.findByProjectIdOrderByCreatedAtAsc(projectId);
+        List<ChatMessage> messages = chatMessageRepository.findByProjectIdOrderByCreatedAtAsc(projectId);
+        int openTasks = (int) (summary.getTodoCount() + summary.getInProgressCount() + summary.getReviewCount());
+        double completionRate = summary.getCompletionRate();
+        long overdue = tasks.stream()
+                .filter(task -> task.getDueDate() != null)
+                .filter(task -> task.getStatus() != null && !"DONE".equals(task.getStatus()))
+                .filter(task -> task.getDueDate().isBefore(LocalDate.now()))
+                .count();
+        long dueSoon = tasks.stream()
+                .filter(task -> task.getDueDate() != null)
+                .filter(task -> task.getStatus() != null && !"DONE".equals(task.getStatus()))
+                .filter(task -> !task.getDueDate().isBefore(LocalDate.now()))
+                .filter(task -> !task.getDueDate().isAfter(LocalDate.now().plusDays(3)))
+                .count();
+        long pendingReview = tasks.stream()
+                .filter(task -> "REVIEW".equals(task.getStatus()) || "PENDING_REVIEW".equals(task.getSubmissionStatus()))
+                .count();
+
+        return projectAiService.answerProjectQuestion(
+                summary.getProjectName(),
+                summary.getMemberCount(),
+                summary.getTaskCount(),
+                openTasks,
+                completionRate,
+                (int) overdue,
+                (int) dueSoon,
+                (int) pendingReview,
+                messages.size(),
+                question
+        );
     }
 
     public ProjectInsightResponse getInsight(Long projectId, String currentUserEmail) {

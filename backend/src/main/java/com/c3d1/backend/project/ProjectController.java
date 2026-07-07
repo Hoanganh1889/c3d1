@@ -268,6 +268,15 @@ public class ProjectController {
         return projectService.getInsight(id, authentication.getName());
     }
 
+    @PostMapping("/{id}/ai/chat")
+    public ProjectAiChatResponse askAiQuestion(
+            @PathVariable Long id,
+            @RequestBody ProjectAiChatRequest request,
+            Authentication authentication
+    ) {
+        return projectService.askAiQuestion(id, authentication.getName(), request.getQuestion());
+    }
+
     @GetMapping("/{id}/tasks/{taskId}/submission/preview")
     public ResponseEntity<Resource> previewTaskSubmission(
             @PathVariable Long id,

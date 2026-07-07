@@ -160,6 +160,11 @@ export const getProjectInsight = async (id) => {
     return response.data;
 };
 
+export const askProjectAi = async (id, question) => {
+    const response = await api.post(`/project/${id}/ai/chat`, { question });
+    return response.data;
+};
+
 export const previewProjectTaskSubmission = async (id, taskId, submissionId = null) => {
     const url = submissionId
         ? `/project/${id}/tasks/${taskId}/submissions/${submissionId}/preview`
