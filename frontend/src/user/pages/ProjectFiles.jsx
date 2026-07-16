@@ -224,8 +224,8 @@ function ProjectFiles() {
 function Card({ label, value }) {
     return (
         <div className="ui-stat-card">
-            <p className="text-[10px] font-bold uppercase text-slate-500">{label}</p>
-            <p className="ui-text-primary text-lg font-bold">{value}</p>
+            <p className="text-[9px] font-bold uppercase text-slate-500">{label}</p>
+            <p className="ui-text-primary text-sm font-bold">{value}</p>
         </div>
     );
 }

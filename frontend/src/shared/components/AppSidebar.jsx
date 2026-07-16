@@ -13,7 +13,7 @@ function SidebarLink({ to, end, children, accent = "cyan" }) {
             to={to}
             end={end}
             className={({ isActive }) =>
-                `flex items-center gap-2 rounded-lg border px-2.5 py-2 text-sm font-semibold transition-all duration-200 ${isActive ? active : idle}`
+                `flex items-center gap-1.5 rounded-md border px-2 py-1.5 text-xs font-semibold transition-all duration-200 ${isActive ? active : idle}`
             }
         >
             {children}
@@ -25,7 +25,7 @@ function SidebarSection({ title, children }) {
     return (
         <div>
             {title ? (
-                <p className="mb-2 px-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                <p className="mb-1.5 px-1 text-[9px] font-bold uppercase tracking-wider text-slate-500">
                     {title}
                 </p>
             ) : null}

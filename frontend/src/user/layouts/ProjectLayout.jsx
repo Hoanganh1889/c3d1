@@ -95,20 +95,20 @@ function ProjectLayout() {
 
     const sidebar = (
         <>
-            <div className="border-b px-4 py-3" style={{ borderColor: "var(--color-border)" }}>
+            <div className="border-b px-3 py-2" style={{ borderColor: "var(--color-border)" }}>
                 <button
                     type="button"
                     onClick={() => navigate("/user/dashboard")}
-                    className="ui-btn-ghost focus-ring w-auto border-0 bg-transparent px-0 py-0 text-xs"
+                    className="ui-btn-ghost focus-ring w-auto border-0 bg-transparent px-0 py-0 text-[11px]"
                 >
-                    <ArrowLeft size={14} />
+                    <ArrowLeft size={13} />
                         {t("layout.dashboard")}
                     </button>
-                <h1 className="ui-text-primary mt-2 truncate text-base font-bold">
+                <h1 className="ui-text-primary mt-1.5 truncate text-sm font-bold">
                     {project.projectName}
                 </h1>
-                <p className="ui-text-faint truncate text-xs">{project.ownerEmail}</p>
-                <div className="mt-2 flex flex-wrap gap-1.5">
+                <p className="ui-text-faint truncate text-[11px]">{project.ownerEmail}</p>
+                <div className="mt-1.5 flex flex-wrap gap-1">
                     <span
                         className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${
                             canManageMembers
@@ -124,7 +124,7 @@ function ProjectLayout() {
                 </div>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3">
+            <div className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
                 <SidebarSection title={t("layout.projectRoom")}>
                     {navItems.map((item) => {
                         const to = item.to
@@ -140,7 +140,7 @@ function ProjectLayout() {
             </div>
 
             <div
-                className="ui-text-faint border-t px-4 py-2 text-[10px]"
+                className="ui-text-faint border-t px-3 py-1.5 text-[9px]"
                 style={{ borderColor: "var(--color-border)" }}
             >
                 {t("layout.updatedAt")}: {formatDateTime(project.updatedAt, locale)}
@@ -162,14 +162,13 @@ function ProjectLayout() {
                 </>
             }
         >
-            <header className="ui-page-header mb-4 hidden lg:flex">
-                <div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
-                        {canManageTasks ? t("layout.projectManage") : t("layout.projectMember")}
-                    </p>
-                    <h2 className="ui-text-primary text-lg font-bold">{currentLabel}</h2>
-                </div>
-            </header>
+            <div className="mb-2 hidden items-center gap-2 lg:flex">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+                    {canManageTasks ? t("layout.projectManage") : t("layout.projectMember")}
+                </span>
+                <span className="ui-text-faint text-xs">/</span>
+                <h2 className="ui-text-primary text-sm font-bold">{currentLabel}</h2>
+            </div>
             <Outlet
                 context={{
                     project,

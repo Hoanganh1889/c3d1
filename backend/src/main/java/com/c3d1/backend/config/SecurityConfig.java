@@ -33,6 +33,7 @@ public class SecurityConfig {
                                 "/api/auth/refresh",
                                 "/api/auth/forgot-password",
                                 "/api/auth/reset-password",
+                                "/actuator/health",
                                 "/error"
                         ).permitAll()
                         .requestMatchers("/api/auth/me", "/api/auth/me/password").authenticated()

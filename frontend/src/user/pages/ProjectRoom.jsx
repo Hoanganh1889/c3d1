@@ -221,33 +221,26 @@ function ProjectRoom() {
     return (
         <div className="ui-page ui-stagger">
             <section className="ui-panel">
-                <p className="ui-text-muted text-sm">
-                    {state.settings?.projectDescription || t("common.none")}
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                    <Link
-                        to={`/project/${project.id}/tasks`}
-                        className="ui-btn-primary"
-                    >
-                        <CheckSquare size={15} />
-                        {t("project.room.tasksLink")}
-                    </Link>
-                    <Link
-                        to="chat"
-                        className="ui-btn-ghost"
-                    >
-                        <MessageSquareText size={15} />
-                        {t("nav.chat")}
-                    </Link>
-                    <Link
-                        to={settingsLink}
-                        className="ui-btn-ghost"
-                    >
-                        {settingsLabel}
-                        <ArrowRight size={14} />
-                    </Link>
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                    <p className="ui-text-muted max-w-2xl text-xs leading-relaxed">
+                        {state.settings?.projectDescription || t("common.none")}
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                        <Link to={`/project/${project.id}/tasks`} className="ui-btn-primary text-xs">
+                            <CheckSquare size={13} />
+                            {t("project.room.tasksLink")}
+                        </Link>
+                        <Link to="chat" className="ui-btn-ghost text-xs">
+                            <MessageSquareText size={13} />
+                            {t("nav.chat")}
+                        </Link>
+                        <Link to={settingsLink} className="ui-btn-ghost text-xs">
+                            {settingsLabel}
+                            <ArrowRight size={12} />
+                        </Link>
+                    </div>
                 </div>
-                <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
+                <dl className="mt-2.5 grid gap-1.5 text-xs sm:grid-cols-2 lg:grid-cols-4">
                     <Fact
                         label={t("settings.inviteCode")}
                         value={state.settings?.inviteCode || project.inviteCode}
@@ -276,7 +269,7 @@ function ProjectRoom() {
                 <MiniStat label={getStatusLabel("DONE", t)} value={summary.done} tone="text-emerald-200" />
             </section>
 
-            <section className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(300px,380px)]">
+            <section className="ui-section-grid ui-section-grid--master-wide">
                 <WorkspacePanel
                     title={t("project.room.progressOverview")}
                     subtitle={t("project.performance.breakdown")}
@@ -303,7 +296,7 @@ function ProjectRoom() {
                 </WorkspacePanel>
             </section>
 
-            <section className="grid gap-4 lg:grid-cols-2">
+            <section className="ui-section-grid ui-section-grid--2">
                 <WorkspacePanel title={t("project.room.deadlineHealth")} subtitle={t("project.room.openTasks")}>
                     <StackedBar items={deadlineItems} emptyLabel={t("project.room.emptyTasks")} />
                 </WorkspacePanel>
@@ -322,7 +315,7 @@ function ProjectRoom() {
                 </section>
             ) : null}
 
-            <section className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
+            <section className="ui-section-grid ui-section-grid--split">
                 <WorkspacePanel
                     title={t("project.room.announcements")}
                     subtitle={`${state.announcements.length} ${t("project.room.posts")}`}
@@ -406,7 +399,7 @@ function ProjectRoom() {
                 </WorkspacePanel>
             </section>
 
-            <section className="grid gap-4 md:grid-cols-3">
+            <section className="ui-section-grid ui-section-grid--3">
                 <WorkspacePanel title={t("project.room.recentTasks")} subtitle={t("dashboard.messagesSubtitle")} scroll>
                     <TaskList tasks={state.tasks.slice(-5).reverse()} t={t} />
                 </WorkspacePanel>
@@ -439,8 +432,8 @@ function ProjectRoom() {
 function MiniStat({ label, value, tone = "ui-text-primary" }) {
     return (
         <div className="ui-stat-card text-center sm:text-left">
-            <p className="text-[10px] font-bold uppercase text-slate-500">{label}</p>
-            <p className={`text-lg font-bold tabular-nums ${tone}`}>{value}</p>
+            <p className="text-[9px] font-bold uppercase text-slate-500">{label}</p>
+            <p className={`text-base font-bold tabular-nums ${tone}`}>{value}</p>
         </div>
     );
 }
@@ -448,8 +441,8 @@ function MiniStat({ label, value, tone = "ui-text-primary" }) {
 function Fact({ label, value }) {
     return (
         <div>
-            <dt className="text-[10px] font-bold uppercase text-slate-500">{label}</dt>
-            <dd className="ui-text-primary mt-0.5 truncate text-sm font-semibold">{value}</dd>
+            <dt className="text-[9px] font-bold uppercase text-slate-500">{label}</dt>
+            <dd className="ui-text-primary mt-0.5 truncate text-xs font-semibold">{value}</dd>
         </div>
     );
 }

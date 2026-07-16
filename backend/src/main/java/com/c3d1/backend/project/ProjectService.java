@@ -6,6 +6,7 @@ import com.c3d1.backend.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.apache.poi.xwpf.usermodel.BodyElementType;
@@ -37,7 +42,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -66,6 +70,7 @@ public class ProjectService {
     private final ProjectAiService projectAiService;
     private final UserRepository userRepository;
     private final SystemSettingsService systemSettingsService;
+    private final S3Client s3Client; // Giả sử bạn đã có bean này
 
     @Value("${c3d1.upload-dir:uploads}")
     private String uploadDir;
@@ -303,52 +308,24 @@ public class ProjectService {
         validateSubmissionContent(file, extension);
         String trustedContentType = trustedContentType(extension);
 
-        // **THAY ĐỔI LOGIC UPLOAD**
-        // Thay vì lưu vào local, chúng ta sẽ upload lên S3.
-        // Giả sử bạn đã cấu hình S3 client và tên bucket.
-        // String bucketName = "c3d1-uploads";
+        // Tên bucket sẽ được cấu hình qua biến môi trường.
+        String bucketName = System.getenv("S3_UPLOAD_BUCKET");
+        if (bucketName == null || bucketName.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Upload bucket is not configured");
+        }
         String storedName = "project-" + projectId + "/task-" + taskId + "/" + UUID.randomUUID() + "-" + sanitizeFileName(originalName);
 
         try {
-            // Ví dụ logic upload S3 (cần có S3Client bean)
-            /*
+            // Logic upload file lên S3, bao gồm cả content type
             s3Client.putObject(PutObjectRequest.builder()
                             .bucket(bucketName)
                             .key(storedName)
+                            .contentType(trustedContentType)
                             .build(),
                     RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-            String s3Path = "s3://" + bucketName + "/" + storedName;
-            */
 
-            task.setSubmissionOriginalName(originalName);
-            task.setSubmissionStoredName(storedName);
-            task.setSubmissionContentType(trustedContentType);
-            task.setSubmissionSize(file.getSize());
-            task.setSubmissionPath(storedName); // Lưu key của S3 thay vì đường dẫn local
-            task.setSubmittedByEmail(currentUserEmail);
-            task.setSubmittedAt(LocalDateTime.now());
-            task.setSubmissionNote(note);
-            task.setSubmissionStatus("PENDING_REVIEW");
-            task.setReviewNote(null);
-            task.setReviewedAt(null);
-            task.setReviewedByEmail(null);
-            task.setStatus("REVIEW");
-
-            Task saved = taskRepository.save(task);
-            taskSubmissionRepository.save(TaskSubmission.builder()
-                    .projectId(projectId)
-                    .taskId(taskId)
-                    .originalName(originalName)
-                    .storedName(storedName)
-                    .contentType(trustedContentType)
-                    .size(file.getSize())
-                    .path(storedName) // Lưu key của S3
-                    .note(note)
-                    .status("PENDING_REVIEW")
-                    .submittedByEmail(currentUserEmail)
-                    .build());
-            logActivity(projectId, currentUserEmail, "SUBMISSION_UPLOADED", "Submitted file", saved.getTitle());
-            return toTaskResponse(saved);
+            // Cập nhật thông tin task và tạo bản ghi lịch sử nộp bài
+            return updateTaskAfterSubmission(task, originalName, storedName, trustedContentType, file.getSize(), note, currentUserEmail);
         } catch (Exception exception) { // Bắt Exception chung hơn cho S3
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not store submission file");
         }
@@ -425,27 +402,36 @@ public class ProjectService {
         requireProjectMember(projectId, currentUserEmail);
 
         if (task.getSubmissionPath() == null || task.getSubmissionPath().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task submission file not found");
+            return ResponseEntity.notFound().build();
         }
 
+        // Tên bucket sẽ được cấu hình qua biến môi trường.
+        String bucketName = System.getenv("S3_UPLOAD_BUCKET");
+        if (bucketName == null || bucketName.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Upload bucket is not configured");
+        }
+        String key = task.getSubmissionPath();
+
         try {
-            Path filePath = Paths.get(task.getSubmissionPath()).toAbsolutePath().normalize();
-            Resource resource = new UrlResource(filePath.toUri());
+            // Lấy file từ S3 dưới dạng một luồng dữ liệu
+            InputStream s3Object = s3Client.getObject(GetObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build());
 
-            if (!resource.exists() || !resource.isReadable()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task submission file not found");
-            }
+            Resource resource = new InputStreamResource(s3Object);
 
-            String downloadName = task.getSubmissionOriginalName() == null
-                    ? "submission"
-                    : safeResponseFileName(task.getSubmissionOriginalName());
-
+            String downloadName = safeResponseFileName(
+                task.getSubmissionOriginalName() == null ? "submission" : task.getSubmissionOriginalName()
+            );
+            
             return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentType(MediaType.parseMediaType(defaultIfBlank(task.getSubmissionContentType(), "application/octet-stream")))
+                    .contentLength(task.getSubmissionSize())
                     .header("X-Content-Type-Options", "nosniff")
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + downloadName + "\"")
                     .body(resource);
-        } catch (MalformedURLException exception) {
+        } catch (Exception exception) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task submission file not found");
         }
     }
@@ -1309,7 +1295,6 @@ public class ProjectService {
             Long submissionId,
             String currentUserEmail
     ) {
-        Task task = taskRepository.findByIdAndProjectId(taskId, projectId).orElseThrow();
         requireProjectMember(projectId, currentUserEmail);
         TaskSubmission submission = taskSubmissionRepository.findById(submissionId).orElseThrow();
         if (!projectId.equals(submission.getProjectId()) || !taskId.equals(submission.getTaskId())) {
@@ -1811,5 +1796,39 @@ public class ProjectService {
             return "";
         }
         return value.length() <= maxLength ? value : value.substring(0, maxLength) + "...";
+    }
+
+    private TaskResponse updateTaskAfterSubmission(Task task, String originalName, String storedName, String contentType, long size, String note, String currentUserEmail) {
+        task.setSubmissionOriginalName(originalName);
+        task.setSubmissionStoredName(storedName);
+        task.setSubmissionContentType(contentType);
+        task.setSubmissionSize(size);
+        task.setSubmissionPath(storedName); // Lưu key của S3
+        task.setSubmittedByEmail(currentUserEmail);
+        task.setSubmittedAt(LocalDateTime.now());
+        task.setSubmissionNote(note);
+        task.setSubmissionStatus("PENDING_REVIEW");
+        task.setReviewNote(null);
+        task.setReviewedAt(null);
+        task.setReviewedByEmail(null);
+        task.setStatus("REVIEW");
+
+        Task saved = taskRepository.save(task);
+
+        taskSubmissionRepository.save(TaskSubmission.builder()
+                .projectId(task.getProjectId())
+                .taskId(task.getId())
+                .originalName(originalName)
+                .storedName(storedName)
+                .contentType(contentType)
+                .size(size)
+                .path(storedName)
+                .note(note)
+                .status("PENDING_REVIEW")
+                .submittedByEmail(currentUserEmail)
+                .build());
+
+        logActivity(task.getProjectId(), currentUserEmail, "SUBMISSION_UPLOADED", "Submitted file", saved.getTitle());
+        return toTaskResponse(saved);
     }
 }

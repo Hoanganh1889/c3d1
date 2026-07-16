@@ -137,8 +137,8 @@ function ProjectSettings() {
     const emptyLabel = t("common.none");
 
     return (
-        <div className="mx-auto w-full min-w-0 max-w-6xl space-y-4">
-            <section className="grid gap-4 lg:grid-cols-2">
+        <div className="ui-page">
+            <section className="ui-section-grid ui-section-grid--2">
                 <LanguageSettingsPanel />
                 <WorkspacePanel title={t("theme.title")} subtitle={t("theme.subtitle")}>
                     <div className="flex items-start gap-3">
@@ -155,7 +155,7 @@ function ProjectSettings() {
                 </WorkspacePanel>
             </section>
 
-            <section className="grid gap-2 sm:grid-cols-2 md:grid-cols-4">
+            <section className="ui-stat-grid md:grid-cols-4">
                 <Info
                     label={t("settings.permission")}
                     value={canEdit ? t("common.owner") : t("common.view")}
@@ -165,7 +165,7 @@ function ProjectSettings() {
                 <Info label={t("settings.messages")} value={settings.messageCount} />
             </section>
 
-            <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,340px)]">
+            <section className="ui-section-grid ui-section-grid--master-wide">
                 <WorkspacePanel title={t("settings.configTitle")} subtitle={t("settings.configSubtitle")}>
                     <form onSubmit={handleSave} className="space-y-3">
                         <Field

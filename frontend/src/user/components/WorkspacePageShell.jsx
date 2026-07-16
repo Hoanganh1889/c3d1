@@ -3,15 +3,15 @@ function WorkspacePageShell({ eyebrow, title, description, actions, stats = [], 
         <div className="ui-page ui-stagger animate-fade-up">
             {(eyebrow || title || description || actions) && (
                 <header className="ui-page-header">
-                    <div className="flex w-full min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <div className="min-w-0 flex-1">
                             {eyebrow ? (
-                                <p className="text-[10px] font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+                                <p className="text-[9px] font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
                                     {eyebrow}
                                 </p>
                             ) : null}
                             {title ? (
-                                <h1 className="ui-text-primary mt-1 text-lg font-bold md:text-xl">
+                                <h1 className="ui-text-primary mt-0.5 text-base font-bold">
                                     {title}
                                 </h1>
                             ) : null}
@@ -47,9 +47,9 @@ function WorkspacePageShell({ eyebrow, title, description, actions, stats = [], 
 function StatCard({ label, value, note, tone = "", style }) {
     return (
         <div className="ui-stat-card animate-fade-up" style={style}>
-            <p className="ui-text-faint text-[10px] font-bold uppercase tracking-wider">{label}</p>
-            <p className={`ui-text-primary mt-0.5 text-lg font-bold tabular-nums ${tone}`}>{value}</p>
-            {note ? <p className="ui-text-muted mt-0.5 truncate text-xs">{note}</p> : null}
+            <p className="ui-text-faint text-[9px] font-bold uppercase tracking-wider">{label}</p>
+            <p className={`ui-text-primary mt-0.5 text-base font-bold tabular-nums ${tone}`}>{value}</p>
+            {note ? <p className="ui-text-muted mt-0.5 truncate text-[11px]">{note}</p> : null}
         </div>
     );
 }
@@ -60,11 +60,11 @@ function WorkspacePanel({ title, subtitle, children, className = "", scroll = fa
             <div className="ui-panel-head">
                 <div className="min-w-0">
                     {subtitle ? (
-                        <p className="ui-text-faint text-[10px] font-bold uppercase tracking-wider">
+                        <p className="ui-text-faint text-[9px] font-bold uppercase tracking-wider">
                             {subtitle}
                         </p>
                     ) : null}
-                    <h2 className="ui-text-primary truncate text-sm font-bold">{title}</h2>
+                    <h2 className="ui-text-primary truncate text-xs font-bold">{title}</h2>
                 </div>
             </div>
             <div className={scroll ? "ui-scroll-panel min-h-0 flex-1" : "min-w-0"}>{children}</div>

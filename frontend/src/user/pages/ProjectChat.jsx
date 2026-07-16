@@ -148,14 +148,14 @@ function ProjectChat() {
     }
 
     return (
-        <div className="mx-auto w-full max-w-6xl space-y-4">
-            <section className="grid gap-2 md:grid-cols-3">
+        <div className="ui-page">
+            <section className="ui-stat-grid md:grid-cols-3">
                 <SmallStat label={t("settings.messages")} value={messages.length} />
                 <SmallStat label={t("project.room.statsMembers")} value={members.length} />
                 <SmallStat label={t("common.owner")} value={project.ownerEmail} />
             </section>
 
-            <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(280px,320px)]">
+            <section className="ui-section-grid ui-section-grid--master-wide">
                 <WorkspacePanel
                     title={t("project.chat.title")}
                     subtitle={`${filteredMessages.length}/${messages.length}`}
@@ -326,7 +326,7 @@ function ChatMessage({
                     ) : null}
                 </div>
 
-                <p className="ui-text-primary mt-2 whitespace-pre-line break-words text-sm leading-5">
+                <p className="ui-text-primary mt-1.5 whitespace-pre-line break-words text-xs leading-5">
                     {message.content}
                 </p>
 
@@ -343,8 +343,8 @@ function ChatMessage({
 function SmallStat({ label, value }) {
     return (
         <div className="ui-stat-card">
-            <p className="ui-text-faint text-[10px] font-bold uppercase tracking-wider">{label}</p>
-            <p className="ui-text-primary mt-0.5 break-all text-sm font-bold">{value}</p>
+            <p className="ui-text-faint text-[9px] font-bold uppercase tracking-wider">{label}</p>
+            <p className="ui-text-primary mt-0.5 break-all text-xs font-bold">{value}</p>
         </div>
     );
 }

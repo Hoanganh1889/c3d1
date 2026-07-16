@@ -181,39 +181,39 @@ function ProjectPerformance() {
 
     return (
         <div className="ui-page ui-stagger">
-            <section className="ui-panel flex flex-wrap items-center justify-between gap-3">
-                <div>
-                    <p className="text-[10px] font-bold uppercase text-cyan-400">
+            <section className="ui-panel flex flex-wrap items-center justify-between gap-2 py-2">
+                <div className="min-w-0 flex-1">
+                    <p className="text-[9px] font-bold uppercase text-cyan-400">
                         {t("project.performance.title")}
                     </p>
-                    <p className="ui-text-muted mt-1 text-sm">{data.summary}</p>
+                    <p className="ui-text-muted mt-0.5 text-xs leading-relaxed">{data.summary}</p>
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center gap-1.5">
                     <button
                         type="button"
                         disabled={exporting}
                         onClick={() => downloadReport("excel")}
-                        className="ui-btn-ghost text-xs"
+                        className="ui-btn-ghost text-[11px]"
                     >
-                        <Download size={14} />
+                        <Download size={13} />
                         {exporting ? t("features.report.exporting") : t("features.report.excel")}
                     </button>
                     <button
                         type="button"
                         disabled={exporting}
                         onClick={() => downloadReport("pdf")}
-                        className="ui-btn-ghost text-xs"
+                        className="ui-btn-ghost text-[11px]"
                     >
-                        <Download size={14} />
+                        <Download size={13} />
                         {t("features.report.pdf")}
                     </button>
                 </div>
                 <div className="text-right">
-                    <p className="text-[10px] font-bold uppercase text-slate-500">
+                    <p className="text-[9px] font-bold uppercase text-slate-500">
                         {t("project.performance.completion")}
                     </p>
-                    <p className="ui-text-primary flex items-center justify-end gap-2 text-xl font-bold">
-                        <Gauge size={18} className="text-cyan-300" />
+                    <p className="ui-text-primary flex items-center justify-end gap-1.5 text-base font-bold">
+                        <Gauge size={15} className="text-cyan-300" />
                         {data.completionRate?.toFixed?.(1) ?? data.completionRate}%
                     </p>
                 </div>
@@ -248,7 +248,7 @@ function ProjectPerformance() {
                 </section>
             ) : null}
 
-            <section className="grid gap-4 lg:grid-cols-2">
+            <section className="ui-section-grid ui-section-grid--2">
                 <WorkspacePanel
                     title={t("project.performance.breakdown")}
                     subtitle={t("tasks.filterStatus")}
@@ -278,7 +278,7 @@ function ProjectPerformance() {
                 </WorkspacePanel>
             </section>
 
-            <section className="grid gap-4 lg:grid-cols-2">
+            <section className="ui-section-grid ui-section-grid--2">
                 <WorkspacePanel title={t("project.room.deadlineHealth")} subtitle={t("project.room.openTasks")}>
                     <StackedBar items={deadlineItems} emptyLabel={t("project.room.emptyTasks")} />
                 </WorkspacePanel>
@@ -287,7 +287,7 @@ function ProjectPerformance() {
                 </WorkspacePanel>
             </section>
 
-            <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(280px,360px)]">
+            <section className="ui-section-grid ui-section-grid--master-wide">
                 <WorkspacePanel
                     title={t("project.performance.ownerDashboard")}
                     subtitle={t("project.performance.ownerDashboardSubtitle")}
@@ -343,11 +343,11 @@ function ProjectPerformance() {
 function Metric({ icon: Icon, label, value }) {
     return (
         <div className="ui-stat-card">
-            <div className="mb-2 inline-flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-400/10 text-cyan-300">
-                <Icon size={16} />
+            <div className="mb-1 inline-flex h-6 w-6 items-center justify-center rounded-md bg-cyan-400/10 text-cyan-300">
+                <Icon size={13} />
             </div>
-            <p className="text-[10px] font-bold uppercase text-slate-500">{label}</p>
-            <p className="ui-text-primary text-lg font-bold">{value}</p>
+            <p className="text-[9px] font-bold uppercase text-slate-500">{label}</p>
+            <p className="ui-text-primary text-sm font-bold">{value}</p>
         </div>
     );
 }
@@ -355,8 +355,8 @@ function Metric({ icon: Icon, label, value }) {
 function SignalCard({ label, value, tone }) {
     return (
         <div className="ui-card">
-            <p className="ui-text-faint text-[10px] font-bold uppercase">{label}</p>
-            <p className={`mt-1 text-lg font-bold ${tone}`}>{value}</p>
+            <p className="ui-text-faint text-[9px] font-bold uppercase">{label}</p>
+            <p className={`mt-0.5 text-sm font-bold ${tone}`}>{value}</p>
         </div>
     );
 }

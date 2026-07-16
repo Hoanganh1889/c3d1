@@ -59,20 +59,20 @@ function ProjectInvite() {
 
     return (
         <div className="ui-page">
-            <section className="ui-panel text-center">
-                <p className="text-[10px] font-bold uppercase text-cyan-400">{t("project.invite.title")}</p>
-                <p className="ui-text-primary mt-2 font-mono text-2xl font-bold tracking-widest">
+            <section className="ui-panel py-2 text-center">
+                <p className="text-[9px] font-bold uppercase text-cyan-400">{t("project.invite.title")}</p>
+                <p className="ui-text-primary mt-1.5 font-mono text-xl font-bold tracking-widest">
                     {settings.inviteCode}
                 </p>
                 <button
                     type="button"
                     onClick={copyCode}
-                    className="ui-btn-primary mt-3"
+                    className="ui-btn-primary mt-2 text-xs"
                 >
-                    <Copy size={15} />
+                    <Copy size={13} />
                     {state.copied ? t("project.invite.copied") : t("project.invite.copy")}
                 </button>
-                <p className="ui-text-faint mt-3 text-xs">{t("project.invite.desc")}</p>
+                <p className="ui-text-faint mt-2 text-[11px]">{t("project.invite.desc")}</p>
             </section>
 
             <section className="ui-stat-grid">
@@ -99,8 +99,8 @@ function ProjectInvite() {
 function Info({ label, value }) {
     return (
         <div className="ui-stat-card">
-            <p className="text-[10px] font-bold uppercase text-slate-500">{label}</p>
-            <p className="ui-text-primary mt-1 truncate text-sm font-semibold">{value}</p>
+            <p className="text-[9px] font-bold uppercase text-slate-500">{label}</p>
+            <p className="ui-text-primary mt-0.5 truncate text-xs font-semibold">{value}</p>
         </div>
     );
 }

@@ -180,8 +180,8 @@ function ProjectMembers() {
     }
 
     return (
-        <div className="mx-auto w-full max-w-6xl space-y-4">
-            <section className="grid gap-2 md:grid-cols-4">
+        <div className="ui-page">
+            <section className="ui-stat-grid md:grid-cols-4">
                 <CompactStat label={t("project.members.title")} value={members.length} />
                 <CompactStat label={t("nav.tasks")} value={workloadMap.size} />
                 <CompactStat
@@ -194,8 +194,8 @@ function ProjectMembers() {
             <section
                 className={
                     isOwner
-                        ? "grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(300px,340px)_minmax(300px,340px)]"
-                        : "grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(300px,360px)]"
+                        ? "ui-section-grid ui-section-grid--3-master"
+                        : "ui-section-grid ui-section-grid--master-wide"
                 }
             >
                 <WorkspacePanel
@@ -465,8 +465,8 @@ function Field({ label, icon: Icon, ...props }) {
 function CompactStat({ label, value }) {
     return (
         <div className="ui-stat-card">
-            <p className="ui-text-faint text-[10px] font-bold uppercase tracking-wider">{label}</p>
-            <h3 className="ui-text-primary mt-0.5 truncate text-lg font-bold">{value}</h3>
+            <p className="ui-text-faint text-[9px] font-bold uppercase tracking-wider">{label}</p>
+            <h3 className="ui-text-primary mt-0.5 truncate text-sm font-bold">{value}</h3>
         </div>
     );
 }

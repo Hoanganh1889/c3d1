@@ -154,34 +154,6 @@ function ProjectAI() {
 
     return (
         <div className="ui-page ui-stagger">
-            <section className="ui-panel">
-                <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(280px,340px)]">
-                    <div>
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-cyan-300">
-                            {t("project.ai.title")}
-                        </p>
-                        <h1 className="ui-text-primary mt-1 text-xl font-bold">
-                            {project.projectName}
-                        </h1>
-                        <p className="ui-page-desc">
-                            {t("project.ai.desc")}
-                        </p>
-                        <p className="ui-text-faint mt-2 text-sm">
-                            {roleLabel}
-                        </p>
-                    </div>
-
-                    <div className="ui-card">
-                        <p className="ui-text-faint text-[10px] font-bold uppercase tracking-wider">
-                            {t("project.ai.nextAction")}
-                        </p>
-                        <h2 className="ui-text-primary mt-1 text-sm font-semibold leading-5">
-                            {insight?.nextAction || performance?.nextAction || t("common.none")}
-                        </h2>
-                    </div>
-                </div>
-            </section>
-
             <section className="ui-stat-grid">
                 <Mini label={t("project.ai.overview")} value={insight?.health || performance?.health || "—"} />
                 <Mini label={t("project.ai.summary")} value={insight?.focus || performance?.focus || "—"} />
@@ -192,7 +164,17 @@ function ProjectAI() {
                 <Mini label={t("project.room.statsMembers")} value={performance?.memberCount ?? state.members.length} />
             </section>
 
-            <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(320px,360px)]">
+            {insight?.nextAction || performance?.nextAction ? (
+                <section className="ui-panel border-cyan-500/10 py-2">
+                    <p className="text-[9px] font-bold uppercase text-cyan-400">{t("project.ai.nextAction")}</p>
+                    <p className="ui-text-primary mt-0.5 text-xs font-semibold">
+                        {insight?.nextAction || performance?.nextAction}
+                    </p>
+                    <p className="ui-text-faint mt-0.5 text-[11px]">{roleLabel}</p>
+                </section>
+            ) : null}
+
+            <section className="ui-section-grid ui-section-grid--master-wide">
                 <WorkspacePanel title={t("project.ai.detailedAnalysis")} subtitle={t("project.ai.overview")}>
                     <div className="space-y-2">
                         <div className="ui-card">
@@ -228,7 +210,7 @@ function ProjectAI() {
                 </WorkspacePanel>
             </section>
 
-            <section className="grid gap-4 xl:grid-cols-2">
+            <section className="ui-section-grid ui-section-grid--2">
                 <WorkspacePanel title={t("project.ai.workload")} subtitle={t("project.room.statsMembers")}>
                     <div className="space-y-2">
                         {analysis.assignees.length > 0 ? (
@@ -258,7 +240,7 @@ function ProjectAI() {
                 </WorkspacePanel>
             </section>
 
-            <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(320px,340px)]">
+            <section className="ui-section-grid ui-section-grid--master-wide">
                 <WorkspacePanel title={t("project.ai.recentActivity")} subtitle={t("project.performance.activityLog")}>
                     <div className="space-y-2">
                         {state.activity.length > 0 ? (
@@ -289,14 +271,36 @@ function ProjectAI() {
                         <div className="ui-card text-sm leading-6">
                             {t("project.ai.chatHelper")}
                         </div>
-                        <div className="space-y-2 rounded-2xl border border-cyan-400/20 bg-slate-950/40 p-3">
+                        
+                        {/* Owner-specific quick actions */}
+                        {currentProjectRole === "OWNER" || currentProjectRole === "CO_OWNER" || currentProjectRole === "MANAGER" ? (
+                            <div className="flex flex-wrap gap-2">
+                                {[
+                                    { label: t("project.ai.quickAnalyze"), prompt: "Phân tích chi tiết tình trạng dự án hiện tại và đề xuất hành động cho owner" },
+                                    { label: t("project.ai.quickWorkload"), prompt: "Phân tích workload của các thành viên và gợi ý phân công lại" },
+                                    { label: t("project.ai.quickRisks"), prompt: "Xác định các rủi ro chính và ưu tiên xử lý" },
+                                    { label: t("project.ai.quickAssign"), prompt: "Gợi ý phân công task cho các thành viên dựa trên workload hiện tại" },
+                                ].map((action) => (
+                                    <button
+                                        key={action.label}
+                                        type="button"
+                                        onClick={() => setChatState((previous) => ({ ...previous, input: action.prompt }))}
+                                        className="ui-btn-ghost text-xs"
+                                    >
+                                        {action.label}
+                                    </button>
+                                ))}
+                            </div>
+                        ) : null}
+                        
+                        <div className="space-y-2 rounded-lg border border-cyan-400/20 bg-slate-950/40 p-2">
                             {chatState.messages.length > 0 ? (
                                 chatState.messages.map((message, index) => (
                                     <div key={`${message.role}-${index}`} className={`rounded-xl px-3 py-2 text-sm ${message.role === "assistant" ? "bg-cyan-400/10 text-slate-100" : "bg-slate-800 text-slate-100"}`}>
                                         <p className="text-[10px] font-semibold uppercase tracking-wider text-cyan-300">
                                             {message.role === "assistant" ? t("project.ai.title") : t("project.room.statsMembers")}
                                         </p>
-                                        <p className="mt-1 leading-6">{message.content}</p>
+                                        <p className="mt-1 leading-6 whitespace-pre-line">{message.content}</p>
                                     </div>
                                 ))
                             ) : (
@@ -305,7 +309,7 @@ function ProjectAI() {
                         </div>
                         <form onSubmit={askAi} className="flex flex-col gap-2 sm:flex-row">
                             <textarea
-                                className="ui-input min-h-[90px] flex-1 resize-none"
+                                className="ui-input min-h-[72px] flex-1 resize-none text-xs"
                                 placeholder={t("project.ai.chatPlaceholder")}
                                 value={chatState.input}
                                 onChange={(event) => setChatState((previous) => ({ ...previous, input: event.target.value }))}
@@ -338,21 +342,21 @@ function ProjectAI() {
 function Mini({ label, value }) {
     return (
         <div className="ui-stat-card">
-            <p className="ui-text-faint text-[10px] font-bold uppercase tracking-wider">{label}</p>
-            <h3 className="ui-text-primary mt-0.5 text-lg font-bold">{value}</h3>
+            <p className="ui-text-faint text-[9px] font-bold uppercase tracking-wider">{label}</p>
+            <h3 className="ui-text-primary mt-0.5 truncate text-sm font-bold">{value}</h3>
         </div>
     );
 }
 
 function InsightTile({ icon: Icon, title, text }) {
     return (
-        <div className="ui-card flex gap-3">
-            <div className="mt-0.5 rounded-lg bg-cyan-400/10 p-2 text-cyan-300">
-                <Icon size={16} />
+        <div className="ui-card flex gap-2">
+            <div className="mt-0.5 rounded-md bg-cyan-400/10 p-1.5 text-cyan-300">
+                <Icon size={14} />
             </div>
             <div>
-                <p className="ui-text-primary text-sm font-semibold">{title}</p>
-                <p className="ui-text-muted mt-1 text-sm">{text}</p>
+                <p className="ui-text-primary text-xs font-semibold">{title}</p>
+                <p className="ui-text-muted mt-0.5 text-xs">{text}</p>
             </div>
         </div>
     );

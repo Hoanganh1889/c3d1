@@ -785,8 +785,8 @@ function ProjectTask() {
                 <div
                     className={
                         isOwner
-                            ? "task-columns-grid grid items-stretch gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(300px,340px)_minmax(300px,360px)]"
-                            : "task-columns-grid grid items-stretch gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(310px,380px)]"
+                            ? "task-columns-grid ui-section-grid ui-section-grid--3-master items-stretch"
+                            : "task-columns-grid ui-section-grid ui-section-grid--master-wide items-stretch"
                     }
                 >
                     <WorkspacePanel
@@ -1338,9 +1338,9 @@ function FilterField({ label, children }) {
 
 function SlaCard({ label, value, tone }) {
     return (
-        <div className={`rounded-lg border px-3 py-2 ${tone}`}>
-            <p className="text-[10px] font-bold uppercase opacity-80">{label}</p>
-            <p className="mt-1 text-lg font-bold">{value}</p>
+        <div className={`rounded-md border px-2.5 py-1.5 ${tone}`}>
+            <p className="text-[9px] font-bold uppercase opacity-80">{label}</p>
+            <p className="mt-0.5 text-sm font-bold">{value}</p>
         </div>
     );
 }

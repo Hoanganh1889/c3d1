@@ -31,9 +31,6 @@ public class ProjectAiService {
     @Value("${c3d1.ai.endpoint:}")
     private String endpoint;
 
-    @Value("${c3d1.ai.api-key:}")
-    private String apiKey;
-
     @Value("${c3d1.ai.model:gpt-4o-mini}")
     private String model;
 
@@ -172,6 +169,7 @@ public class ProjectAiService {
     }
 
     private boolean hasConfig() {
+        String apiKey = System.getenv("C3D1_AI_API_KEY");
         return "openai".equalsIgnoreCase(provider) && endpoint != null && !endpoint.isBlank() && apiKey != null && !apiKey.isBlank();
     }
 
@@ -197,7 +195,7 @@ public class ProjectAiService {
         RestTemplate restTemplate = restTemplateBuilder.build();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(apiKey);
+        headers.setBearerAuth(System.getenv("C3D1_AI_API_KEY"));
 
         Map<String, Object> body = Map.of(
                 "model", model,

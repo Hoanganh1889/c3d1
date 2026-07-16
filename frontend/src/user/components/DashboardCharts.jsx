@@ -14,8 +14,8 @@ function DonutChart({ items, centerValue, centerLabel, emptyLabel }) {
     let offset = 0;
 
     return (
-        <div className="flex min-w-0 flex-col items-center gap-3 sm:flex-row sm:items-center">
-            <div className="relative h-36 w-36 shrink-0">
+        <div className="flex min-w-0 flex-col items-center gap-2 sm:flex-row sm:items-center">
+            <div className="relative h-28 w-28 shrink-0">
                 <svg viewBox="0 0 112 112" role="img" aria-label={centerLabel} className="h-full w-full">
                     <circle
                         cx="56"
@@ -53,8 +53,8 @@ function DonutChart({ items, centerValue, centerLabel, emptyLabel }) {
                         : null}
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <p className="ui-text-primary text-xl font-bold tabular-nums">{centerValue}</p>
-                    <p className="ui-text-faint max-w-20 truncate text-[10px] font-bold uppercase">
+                    <p className="ui-text-primary text-base font-bold tabular-nums">{centerValue}</p>
+                    <p className="ui-text-faint max-w-16 truncate text-[9px] font-bold uppercase">
                         {centerLabel}
                     </p>
                 </div>
@@ -88,12 +88,12 @@ function BarChart({ items, emptyLabel, unit = "" }) {
 
     return (
         <div className="min-w-0">
-            <div className="grid min-h-40 grid-cols-[repeat(auto-fit,minmax(58px,1fr))] items-end gap-2">
+            <div className="grid min-h-32 grid-cols-[repeat(auto-fit,minmax(52px,1fr))] items-end gap-1.5">
                 {items.map((item, index) => {
                     const height = Math.max(8, Math.round((Number(item.value || 0) / max) * 100));
                     return (
-                        <div key={item.label} className="flex min-w-0 flex-col items-center gap-2">
-                            <div className="flex h-32 w-full max-w-16 items-end justify-center rounded-lg border px-2 py-2" style={{ borderColor: "var(--color-border-subtle)" }}>
+                        <div key={item.label} className="flex min-w-0 flex-col items-center gap-1.5">
+                            <div className="flex h-24 w-full max-w-14 items-end justify-center rounded-md border px-1.5 py-1.5" style={{ borderColor: "var(--color-border-subtle)" }}>
                                 <div
                                     className="ui-chart-bar w-full rounded-md"
                                     style={{
@@ -123,8 +123,8 @@ function StackedBar({ items, emptyLabel }) {
     }
 
     return (
-        <div className="space-y-3">
-            <div className="flex h-3 overflow-hidden rounded-full bg-[var(--color-surface-muted)]">
+        <div className="space-y-2">
+            <div className="flex h-2.5 overflow-hidden rounded-full bg-[var(--color-surface-muted)]">
                 {items
                     .filter((item) => Number(item.value || 0) > 0)
                     .map((item, index) => (
@@ -156,12 +156,12 @@ function StackedBar({ items, emptyLabel }) {
 
 function LegendRow({ color, label, value, detail }) {
     return (
-        <div className="flex min-w-0 items-center justify-between gap-3 rounded-lg border px-2.5 py-2" style={{ borderColor: "var(--color-border-subtle)" }}>
-            <div className="flex min-w-0 items-center gap-2">
-                <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: color }} />
-                <span className="ui-text-muted truncate text-xs font-semibold">{label}</span>
+        <div className="flex min-w-0 items-center justify-between gap-2 rounded-md border px-2 py-1.5" style={{ borderColor: "var(--color-border-subtle)" }}>
+            <div className="flex min-w-0 items-center gap-1.5">
+                <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: color }} />
+                <span className="ui-text-muted truncate text-[11px] font-semibold">{label}</span>
             </div>
-            <span className="ui-text-primary shrink-0 text-xs font-bold tabular-nums">
+            <span className="ui-text-primary shrink-0 text-[11px] font-bold tabular-nums">
                 {value}
                 {detail ? <span className="ui-text-faint ml-1 font-medium">{detail}</span> : null}
             </span>
